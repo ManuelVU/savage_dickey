@@ -23,7 +23,7 @@ ddifbeta<-function(x,alpha_1,beta_1,alpha_2,beta_2){
     fx<-beta(alpha_2,beta_1)*x^(beta_1+beta_2-1)*((1-x)^(alpha_2+beta_1-1))*gaus$value*(1/(beta(alpha_1,beta_1)*beta(alpha_2,beta_2)))
   }
   else if(x==0){
-    if((alpha_1+alpha_2)>0&(beta_1+beta_2)>0){
+    if((alpha_1+alpha_2)>1&(beta_1+beta_2)>1){
       fx<-beta(alpha_1+alpha_2-1,beta_1+beta_2-1)/(beta(alpha_1,beta_1)*beta(alpha_2,beta_2))
     }
     else{
