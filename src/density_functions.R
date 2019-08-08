@@ -85,12 +85,18 @@ dratiobeta<-function(x,alpha_1,beta_1,alpha_2,beta_2){
 # the model comparison method
 # THE METHODS MODELCOMPARISON AND DIF ARE EQUIVALENT
 betabf <- function(x1,n1,x2,n2,a1=1,b1=1,a2=1,b2=1,method="modelcomparison"){
+  results<-list()
   if(method=="modelcomparison"){
     a1pos <- sum(x1)+a1
     b1pos <- n1-sum(x1)+b1
     a2pos <- sum(x2)+a2
     b2pos <- n2-sum(x2)+b2
     bf <- (beta(a1pos,b1pos)*beta(a2pos,b2pos))/(beta(a1pos+a2pos-a1,b1pos+b2pos-b1))
+    results$BF<-matrix(c(beta(a1pos+a2pos-a1,b1pos+b2pos-b1),
+                         beta(a1pos,b1pos)*beta(a2pos,b2pos),
+                         bf),nrow=3,ncol=1)
+    colnames(results$BF)<-c('Value')
+    rownames(results$BF)<-c('h0','h1','bf')
   }
   else if(method=="dif"){
     if((a1+a2)>1&(b1+b2)>1){
@@ -101,6 +107,11 @@ betabf <- function(x1,n1,x2,n2,a1=1,b1=1,a2=1,b2=1,method="modelcomparison"){
       priordx <-ddifbeta(0,a1,b1,a2,b2)
       posteriordx <- ddifbeta(0,a1pos,b1pos,a2pos,b2pos)
       bf <- priordx/posteriordx
+      results$BF<-matrix(c(priordx,
+                           posteriordx,
+                           bf),nrow=3,ncol=1)
+      colnames(results$BF)<-c('Value')
+      rownames(results$BF)<-c('h0','h1','bf')
     }
     else{
       stop("error: density not defined at 0 for a1+a2<=1 and/or b1+b2<=1")
@@ -115,10 +126,22 @@ betabf <- function(x1,n1,x2,n2,a1=1,b1=1,a2=1,b2=1,method="modelcomparison"){
       priordx <-dratiobeta(1,a1,b1,a2,b2)
       posteriordx <- dratiobeta(1,a1pos,b1pos,a2pos,b2pos)
       bf <- priordx/posteriordx
+      results$BF<-matrix(c(priordx,
+                           posteriordx,
+                           bf),nrow=3,ncol=1)
+      colnames(results$BF)<-c('Value')
+      rownames(results$BF)<-c('h0','h1','bf')
     }
     else{
       stop("error: density not defined at 1 for a1+a2<=1 and/or b1+b2<=1")
     }
   }
-  return(bf)
+  results$method<-method
+  results$parameters<-matrix(c(a1,a1pos,
+                               b1,b1pos,
+                               a2,a2pos,
+                               b2,b2pos),ncol=2,nrow=4,byrow=T)
+  colnames(results$parameters)<-c('Prior','Posterior')
+  rownames(results$parameters)<-c('alpha','beta','alpha','beta')
+  return(results)
 }
