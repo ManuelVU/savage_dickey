@@ -145,6 +145,34 @@ dratiobeta<-function(x,alpha_1,beta_1,alpha_2,beta_2){
   }
   return(fx)
 }
+# Density of the relative ratio of two independent random beta variables 
+# the sum fo alpha (as well as the sum of the betas) should be greater
+# than 1
+drelratiobeta<-function(x,alpha_1,beta_1,alpha_2,beta_2){
+  if(x<0){
+    stop("x must be greater than 0")
+  }
+  else if(x>0){
+    stop("x must be lower than 1")
+  }
+  else if(x>0&x<=0.5){
+    gaus<-integrate(dgaushyp,lower = 0,upper=1,
+                    a=alpha_1+alpha_2,
+                    b=1-beta_1,
+                    c=alpha_1+alpha_2+beta_2,
+                    y=x/(1-x)) 
+    fx<-(x^(alpha_1-1))*((1-x)^(alpha_1+1))*beta(alpha_1+alpha_2,beta_2)*gaus$value*(1/(beta(alpha_1,beta_1)*beta(alpha_2,beta_2)))
+  }
+  else{
+    gaus<-integrate(dgaushyp,lower = 0,upper=1,
+                    a=alpha_1+alpha_2,
+                    b=1-beta_2,
+                    c=alpha_1+alpha_2+beta_1,
+                    y=(1-x)/x)
+    fx<-(1/(beta(alpha_1,beta_1)*beta(alpha_2,beta_2)))*gaus$value*(x^(-(alpha_2+1)))*((1-x)^(alpha_2-1))*beta(alpha_1+alpha_2,beta_2)
+  }
+  return(fx)
+}
 # Bayesian model comparison theta_1=theta_2 with independent beta
 # distributions 
 # methods
