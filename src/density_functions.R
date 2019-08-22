@@ -152,7 +152,7 @@ drelratiobeta<-function(x,alpha_1,beta_1,alpha_2,beta_2){
   if(x<0){
     stop("x must be greater than 0")
   }
-  else if(x>0){
+  else if(x>1){
     stop("x must be lower than 1")
   }
   else if(x>0&x<=0.5){
@@ -160,16 +160,16 @@ drelratiobeta<-function(x,alpha_1,beta_1,alpha_2,beta_2){
                     a=alpha_1+alpha_2,
                     b=1-beta_1,
                     c=alpha_1+alpha_2+beta_2,
-                    y=x/(1-x)) 
-    fx<-(x^(alpha_1-1))*((1-x)^(alpha_1+1))*beta(alpha_1+alpha_2,beta_2)*gaus$value*(1/(beta(alpha_1,beta_1)*beta(alpha_2,beta_2)))
+                    y=(x/(1-x))) 
+    fx<-(1/(beta(alpha_1,beta_1)*beta(alpha_2,beta_2)))*(1/((1-x)^2))*((x/(1-x))^(alpha_1-1))*beta(alpha_1+alpha_2,beta_2)*gaus$value
   }
   else{
     gaus<-integrate(dgaushyp,lower = 0,upper=1,
                     a=alpha_1+alpha_2,
                     b=1-beta_2,
                     c=alpha_1+alpha_2+beta_1,
-                    y=(1-x)/x)
-    fx<-(1/(beta(alpha_1,beta_1)*beta(alpha_2,beta_2)))*gaus$value*(x^(-(alpha_2+1)))*((1-x)^(alpha_2-1))*beta(alpha_1+alpha_2,beta_2)
+                    y=((1-x)/x))
+    fx<-(1/(beta(alpha_1,beta_1)*beta(alpha_2,beta_2)))*(1/(x^2))*(((1-x)/x)^(alpha_2-1))*beta(alpha_1+alpha_2,beta_1)*gaus$value
   }
   return(fx)
 }
@@ -184,6 +184,9 @@ drelratiobeta<-function(x,alpha_1,beta_1,alpha_2,beta_2){
 # "ratio" returns savage-dickey approximation of the bayes factor in favor
 # of the hypothesis that theta_1???theta_2 testing the ratio between 
 # two independent beta random variables at 1
+# "relative_ratio" returns returns savage-dickey approximation of the bayes factor in favor
+# of the hypothesis that theta_1???theta_2 testing the ratio between 
+# two independent beta random variables at 0.5
 # default values initialize both prior distribution with a beta(1,1) and 
 # the model comparison method
 # THE METHODS MODELCOMPARISON AND DIF ARE EQUIVALENT
@@ -237,6 +240,25 @@ betabf <- function(x1,n1,x2,n2,a1=1,b1=1,a2=1,b2=1,method="modelcomparison"){
     }
     else{
       stop("error: density not defined at 1 for a1+a2<=1 and/or b1+b2<=1")
+    }
+  }
+  else if(method=="relative_ratio"){
+    if((a1+a2)>1&(b1+b2)>1){
+      a1pos <- sum(x1)+a1
+      b1pos <- n1-sum(x1)+b1
+      a2pos <- sum(x2)+a2
+      b2pos <- n2-sum(x2)+b2
+      priordx <-drelratiobeta(0.5,a1,b1,a2,b2)
+      posteriordx <- drelratiobeta(0.5,a1pos,b1pos,a2pos,b2pos)
+      bf <- priordx/posteriordx
+      results$BF<-matrix(c(priordx,
+                           posteriordx,
+                           bf),nrow=3,ncol=1)
+      colnames(results$BF)<-c('Value')
+      rownames(results$BF)<-c('h0','h1','bf')
+    }
+    else{
+      stop("error: density not defined at 0.5 for a1+a2<=1 and/or b1+b2<=1")
     }
   }
   results$method<-method
