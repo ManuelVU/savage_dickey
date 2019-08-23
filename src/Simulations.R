@@ -12,12 +12,14 @@ t1 <-  matrix(NA, nrow=length(n_1),ncol=sim)
 t2 <-  matrix(NA, nrow=length(n_1),ncol=sim)
 bf_dif <- matrix(NA, nrow=length(n_1),ncol=sim)
 bf_ratio <- matrix(NA, nrow=length(n_1),ncol=sim)
+bf_ratio2<- matrix(NA, nrow=length(n_1),ncol=sim)
 for(n in 1:length(n_1)){
   for(i in 1:sim){
     t1[n,i] <- rbinom(1,n_1[n],theta_1)
     t2[n,i] <- rbinom(1,n_2[n],theta_2)
     bf_dif[n,i] <- 1/betabf(x1 = t1[n,i],n1 = n_1[n],x2 = t2[n,i],n2 = n_2[n],method="dif")$BF[3]
     bf_ratio[n,i] <- 1/betabf(x1 = t1[n,i],n1 = n_1[n],x2 = t2[n,i],n2 = n_2[n],method="relative_ratio")$BF[3]
+    bf_ratio2[n,i] <- 1/betabf(x1 = t1[n,i],n1 = n_1[n],x2 = t2[n,i],n2 = n_2[n],method="ratio")$BF[3]
   }
 }
 k <- seq(1,9,0.1)
@@ -41,8 +43,8 @@ plot(abs(t1[7,]/n_1[7]-t2[7,]/n_2[7]),bf_dif[7,])
 abline(h=1)
 plot(abs(0.5-t1[7,]/(t1[7,]+t2[7,])),bf_ratio[7,])
 abline(h=1)
-test<-sequential_hcl(length(sort(unique(t1[7,]+t2[7,]))),'Dark Mint')
 points(rep(0,length(test)),bf_ratio[7,which()],
        col=test,pch=16)
-plot(t1[7,which(t1[7,]==t2[7,])]+t2[7,which(t1[7,]==t2[7,])],
-     bf_ratio[7,which(t1[7,]==t2[7,])],col=test)
+plot(t1[7,]/(t1[7,]+t2[7,]),bf_ratio2[7,])
+plot((t1[7,]+t2[7,]),bf_ratio2[7,])
+plot(t1[7,]-t2[7,],bf_dif[7,])
