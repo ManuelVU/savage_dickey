@@ -2,6 +2,7 @@
 # and sample sizes
 #### n = 5,10,20,40,80 ####
 # Equal thetas theta_1=theta_2=0.5
+library(colorspace)
 n_1 <- c(5,10,20,40,80,140,200)
 n_2 <- c(5,10,20,40,80,140,200)
 samplesize_color <- qualitative_hcl(n=7,'Dark3')
@@ -39,12 +40,3 @@ for(n in 1:length(n_1)){
   lines(k, correct_ratio[n,],col=samplesize_color[n],lwd=2)
 }
 
-plot(abs(t1[7,]/n_1[7]-t2[7,]/n_2[7]),bf_dif[7,])
-abline(h=1)
-plot(abs(0.5-t1[7,]/(t1[7,]+t2[7,])),bf_ratio[7,])
-abline(h=1)
-points(rep(0,length(test)),bf_ratio[7,which()],
-       col=test,pch=16)
-plot(t1[7,]/(t1[7,]+t2[7,]),bf_ratio2[7,])
-plot((t1[7,]+t2[7,]),bf_ratio2[7,])
-plot(t1[7,]-t2[7,],bf_dif[7,])
