@@ -40,6 +40,7 @@ for(n in 1:length(n_1)){
 }
 dev.off()
 #### Equal thetas at .1, .3, .7, .9 n=50 ####
+library(colorspace)
 n_1 <- 50
 n_2 <- 50
 samplesize_color <- qualitative_hcl(n=4,'Dark3')
@@ -76,6 +77,52 @@ legend('topright',legend=theta_1,lty=1,col=samplesize_color)
 for(n in 1:length(theta_1)){
   lines(k, correct_dif[n,],col=samplesize_color[n],lty=2,lwd=2)  
   lines(k, correct_ratio[n,],col=samplesize_color[n],lwd=2)
+}
+
+#### Equal thetas for ratio and dif ####
+library(colorspace)
+n_1 <- 50
+n_2 <- 50
+theta_1 <- seq(.05,.95,.05)
+theta_2 <- seq(.05,.95,.05)
+samplesize_color <- sequential_hcl(n=length(theta_1),"Mint")
+sim<-10000
+t1 <-  matrix(NA, nrow=length(theta_1),ncol=sim)
+t2 <-  matrix(NA, nrow=length(theta_1),ncol=sim)
+bf_dif <- matrix(NA, nrow=length(theta_1),ncol=sim)
+bf_ratio <- matrix(NA, nrow=length(theta_1),ncol=sim)
+for(n in 1:length(theta_1)){
+  for(i in 1:sim){
+    t1[n,i] <- rbinom(1,n_1,theta_1[n])
+    t2[n,i] <- rbinom(1,n_2,theta_2[n])
+    bf_dif[n,i] <- 1/betabf(x1 = t1[n,i],n1 = n_1,x2 = t2[n,i],n2 = n_2,method="dif")$BF[3]
+    bf_ratio[n,i] <- 1/betabf(x1 = t1[n,i],n1 = n_1,x2 = t2[n,i],n2 = n_2,method="relative_ratio")$BF[3]
+  }
+}
+k <- seq(1,15,0.1)
+correct_dif<-matrix(NA,nrow=length(theta_1),ncol=length(k))
+correct_ratio<-matrix(NA,nrow=length(theta_1),ncol=length(k))
+for(n in 1:length(theta_1)){
+  for(i in 1:length(k)){
+    correct_dif[n,i] <- sum(bf_dif[n,]>k[i])/sim
+    correct_ratio[n,i] <- sum(bf_ratio[n,]>k[i])/sim
+  }
+}
+
+plot(0,0,axes=F, ann=F,type="n",ylim=c(0,1),xlim=c(1,max(k)))
+axis(1)
+axis(2, las=2)
+box()
+for(n in 1:length(theta_1)){
+  lines(k,correct_ratio[n,],col=samplesize_color[n],lwd=1.5)
+}
+
+plot(0,0,axes=F, ann=F,type="n",ylim=c(0,1),xlim=c(1,max(k)))
+axis(1)
+axis(2, las=2)
+box()
+for(n in 1:length(theta_1)){
+  lines(k,correct_dif[n,],col=samplesize_color[n],lwd=1.5,lty=2)
 }
 
 #### Unequal thetas delta=0.15 theta=0.5 ####
@@ -151,6 +198,7 @@ for(n in 1:length(n_1)){
 }
 
 #### Unequal thetas delta=0.15 theta=0.2,0.4,0.6,0.8 n=50####
+library(colorspace)
 n_1 <- 50
 n_2 <- 50
 samplesize_color <- qualitative_hcl(n=4,'Dark3')
