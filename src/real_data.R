@@ -1,19 +1,9 @@
 load("results/karina_2.Rdata")
-
-
-
 negative <- sum(base_completah$biggerchosen[which(base_completah$pairP%%2==0)])
 n_neg <- length(base_completah$biggerchosen[which(base_completah$pairP%%2==0)])
 positive <- sum(base_completah$biggerchosen[which(base_completah$pairP%%2!=0)])
 n_pos <- length(base_completah$biggerchosen[which(base_completah$pairP%%2!=0)])
-
 k_bf <- betabf(positive,n_pos,negative,n_neg)
-
-x <- seq(0,1,0.01)
-dx <- c()
-for(i in 1:length(x)){
-  dx[i] <- dbeta(x[i],k_bf$parameters[1,2],k_bf$parameters[2,2])
-}
 curve(dbeta(x,357,95))
 curve(dbeta(x,92,360),col='blue',add=T)
 
