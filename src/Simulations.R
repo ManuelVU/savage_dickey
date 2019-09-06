@@ -18,7 +18,6 @@ for(n in 1:length(n_1)){
     t2[n,i] <- rbinom(1,n_2[n],theta_2)
     bf_dif[n,i] <- 1/betabf(x1 = t1[n,i],n1 = n_1[n],x2 = t2[n,i],n2 = n_2[n],method="dif")$BF[3]
     bf_ratio[n,i] <- 1/betabf(x1 = t1[n,i],n1 = n_1[n],x2 = t2[n,i],n2 = n_2[n],method="relative_ratio")$BF[3]
-    bf_ratio2[n,i] <- 1/betabf(x1 = t1[n,i],n1 = n_1[n],x2 = t2[n,i],n2 = n_2[n],method="ratio")$BF[3]
   }
 }
 k <- seq(1,9,0.1)

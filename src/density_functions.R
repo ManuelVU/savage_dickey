@@ -270,3 +270,4 @@ betabf <- function(x1,n1,x2,n2,a1=1,b1=1,a2=1,b2=1,method="modelcomparison"){
   rownames(results$parameters)<-c('alpha','beta','alpha','beta')
   return(results)
 }
+    
